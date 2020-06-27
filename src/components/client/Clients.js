@@ -4,6 +4,7 @@ import axios from 'axios';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import Footer from '../layouts/Footer';
+import SweetAlert from 'react-bootstrap-sweetalert';
 const Client = props => (
   <tr>
     <td>{props.client.nom}</td>
@@ -15,7 +16,7 @@ const Client = props => (
         <i className="nav-icon fa fa-edit" style={{"fontSize":"25px"}}></i>
       </Link>
       |
-      <a href="/client" onClick={() => { props.deleteClient(props.client._id) }}>
+      <a href="/client" onClick={(e) => { props.deleteThisGoal(e,props.client._id) }}>
         <i className="nav-icon fa fa-trash" style={{"fontSize":"25px"}}></i>
       </a>
     </td>
@@ -27,8 +28,10 @@ export default class ClientList extends Component {
     super(props);
 
     this.deleteProduitClient = this.deleteClient.bind(this)
+    this.deleteThisGoal = this.deleteThisGoal.bind(this)
+    this.onCancelDelete = this.onCancelDelete.bind(this)
 
-    this.state = {clients: []};
+    this.state = {clients: [],alert:null};
   }
 
   componentDidMount() {
@@ -46,13 +49,40 @@ export default class ClientList extends Component {
       .then(response => { console.log(response.data)});
 
     this.setState({
-      clients: this.state.clients.filter(el => el._id !== id)
+      clients: this.state.clients.filter(el => el._id !== id),
+      alert:null
     })
   }
+  
+  deleteThisGoal(e,id) {
+    e.preventDefault();
+    const getAlert = () => (
+      <SweetAlert
+        warning
+        showCancel
+        confirmBtnText="Supprimer"
+        confirmBtnBsStyle="danger"
+        cancelBtnBsStyle="default"
+        title="Supprimer cette client?"
+        onCancel={() => this.onCancelDelete()}
+        onConfirm={() => this.deleteClient(id)}
+        >
+        </SweetAlert>
+    );
+
+    this.setState({
+      alert: getAlert()
+    });
+  }
+  onCancelDelete(){
+    this.setState({
+        alert: null
+    });
+}
 
   clientList() {
     return this.state.clients.map(currentclient => {
-      return <Client client={currentclient} deleteClient={this.deleteClient} key={currentclient._id}/>;
+      return <Client client={currentclient} deleteThisGoal={this.deleteThisGoal} key={currentclient._id}/>;
     })
   }
 
@@ -98,7 +128,7 @@ export default class ClientList extends Component {
                         <th>Prenom</th>
                         <th>Email</th>
                         <th>Téléphone</th>
-                        <th>Actions</th>
+                        <th>Actions</th>{this.state.alert}
                       </tr>
                     </thead>         
                     <tbody >

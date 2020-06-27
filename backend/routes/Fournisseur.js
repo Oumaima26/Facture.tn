@@ -25,7 +25,19 @@ router.route('/countfournisseur').get(function(req,res){
 
 
 })
-//ajouter un client "post http://localhost:3001/Fournisseur/ajouter"
+// recherche d'un fournisseur par nom de fournisseur
+router.route('/nom/:nom')
+    .get(function(request, response) {
+            var nom = request.params.nom;       
+            Fournisseur.findOne({nom:nom},  function(err, fournisseur) {
+              if (err) {
+                response.json(err);
+              }
+      
+              response.json(fournisseur);
+            });
+         });
+//ajouter un fournisseur "post http://localhost:3001/Fournisseur/ajouter"
 router.route('/ajouter').post((req, res) => {
     const nom = req.body.nom;
     const prenom = req.body.prenom;  

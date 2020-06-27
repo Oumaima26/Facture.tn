@@ -4,6 +4,7 @@ import '../css/Style.css';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import Footer from '../layouts/Footer';
+import SweetAlert from 'react-bootstrap-sweetalert';
 export const add = prod => {
   
   return axios
@@ -34,6 +35,10 @@ class AjouterProduit extends Component {
       this.onChangePrix = this.onChangePrix.bind(this);
       this.onChangeNomcategorie = this.onChangeNomcategorie.bind(this);
       this.onSubmit = this.onSubmit.bind(this);
+      this.successAlert = this.successAlert.bind(this);
+      this.onCancel = this.onCancel.bind(this);
+      this.showAlert = this.showAlert.bind(this);
+      this.onConfirm = this.onConfirm.bind(this);
 
       this.state = {
         reference:0,
@@ -42,6 +47,7 @@ class AjouterProduit extends Component {
         quantite:0,
         TVA:0,       
         prix:0,
+        alert:null,
         nomcategorie:'',
         categories :[],
         tvas:[0,7,13],
@@ -132,9 +138,47 @@ class AjouterProduit extends Component {
             })
       
         }
+        successAlert() {
+          const getAlert = () => (
+            <SweetAlert 
+            success 
+            title="Good job!" 
+            onConfirm={()=>this.onConfirm} 
+            onCancel={()=>this.onCancel}>
+              You clicked the button!
+          </SweetAlert>
+          );
+      
+          this.setState({
+            alert: getAlert()
+          });
+        }
         
-       
-        
+       onConfirm(){
+         window.location = '/produit';       
+       }
+        onCancel(){
+          this.setState({
+              alert: null
+          });
+      }
+      showAlert(err) {
+        this.setState({
+            alert: (
+                <SweetAlert 
+                    danger
+                    showCancel
+                    cancelBtnText = "No"
+                    cancelBtnBsStyle = "default"
+                    customIcon = "thumbs-up.jpg"
+                    title ="Erreur"
+                    onCancel = {this.onCancel}
+                >
+                    {err}
+                </SweetAlert>
+            )            
+        });
+    }
         onSubmit = (e) => {
             e.preventDefault();
            
@@ -145,11 +189,14 @@ class AjouterProduit extends Component {
                 quantite: this.state.quantite,
                 prix: this.state.prix,
                 TVA: this.state.TVA,
-                nomcategorie:this.nomcategorie,
+                nomcategorie:this.state.nomcategorie
               
               }
               console.log(produit);
-              add(produit);/*
+              add(produit).then((res) => {
+                this.successAlert()
+                window.location = '/produit'; 
+              })/*
            axios.post('http://localhost:3001/Produit/ajouter', produit)
               .then(res => console.log(res.data));*/
               this.setState({
@@ -208,7 +255,8 @@ class AjouterProduit extends Component {
                                   <select name="nomcategorie"
                                       className="form-control"
                                       value={this.state.nomcategorie}
-                                      onChange={this.onChangeNomcategorie}>                                    
+                                      onChange={this.onChangeNomcategorie}>  
+                                      <option></option>                                  
                                       {
                                         this.state.categories.map((nomcategorie,index)=> {
                                           return <option 
@@ -320,7 +368,7 @@ class AjouterProduit extends Component {
                                   }
                                 </select>
                                 </div>
-                              
+                              {this.state.alert}
                               
                               <div className="ajouter">
                                   <input type="submit" value="Ajouter produit" className="btn btn-primary" />

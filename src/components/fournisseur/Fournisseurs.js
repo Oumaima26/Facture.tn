@@ -4,7 +4,7 @@ import axios from 'axios';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import Footer from '../layouts/Footer';
-import MyContext from '../MyContext';
+import SweetAlert from 'react-bootstrap-sweetalert';
 const Fournisseur = props => (
   <tr>
     <td>{props.fournisseur.nom}</td>
@@ -17,7 +17,7 @@ const Fournisseur = props => (
         <i className="nav-icon fa fa-edit" style={{"fontSize":"25px"}}></i>
     </Link> </button>
     <button>
-      <a href="/fournisseur" onClick={() => { props.deleteFournisseur(props.fournisseur._id) }}>
+      <a href="/fournisseur" onClick={(e) => { props.deleteThisGoal(e,props.fournisseur._id) }}>
         <i className="nav-icon fa fa-trash" style={{"fontSize":"25px"}}></i>
       </a></button>
     </td>
@@ -29,8 +29,13 @@ export default class FournisseurList extends Component {
     super(props);
 
     this.deleteFournisseur = this.deleteFournisseur.bind(this)
+    this.deleteThisGoal = this.deleteThisGoal.bind(this)
+    this.onCancelDelete = this.onCancelDelete.bind(this)
 
-    this.state = {fournisseurs: []};
+    this.state = {
+      fournisseurs: [],
+      alert:null
+    };
   }
 
   componentDidMount() {
@@ -45,27 +50,48 @@ export default class FournisseurList extends Component {
 
   deleteFournisseur(id) {
     
-    alert("OK!")
     axios.delete('http://localhost:3001/Fournisseur/'+id)
       .then(response => { 
         console.log(response.data)});
 
     this.setState({
-        fournisseurs: this.state.fournisseurs.filter(el => el._id !== id)
+        fournisseurs: this.state.fournisseurs.filter(el => el._id !== id),
+        alert:null
     })
   }
 
+  deleteThisGoal(e,id) {
+    e.preventDefault();
+    const getAlert = () => (
+      <SweetAlert
+        warning
+        showCancel
+        confirmBtnText="Supprimer"
+        confirmBtnBsStyle="danger"
+        cancelBtnBsStyle="default"
+        title="Supprimer cette fournisseur?"
+        onCancel={() => this.onCancelDelete()}
+        onConfirm={() => this.deleteFournisseur(id)}
+        >
+        </SweetAlert>
+    );
+
+    this.setState({
+      alert: getAlert()
+    });
+  }
+  onCancelDelete(){
+    this.setState({
+        alert: null
+    });
+}
   fournisseurList() {
     return this.state.fournisseurs.map(currentfournisseur => {
-      return <Fournisseur fournisseur={currentfournisseur} deleteFournisseur={this.deleteFournisseur} key={currentfournisseur._id}/>;
+      return <Fournisseur fournisseur={currentfournisseur} deleteThisGoal={this.deleteThisGoal} key={currentfournisseur._id}/>;
     })
   }
 
   render() {
-    return (
-    <MyContext.Consumer>
-      {
-        data =>{
           return(
           <div>
             <Header/>
@@ -109,7 +135,7 @@ export default class FournisseurList extends Component {
                     <th>Téléphone</th>
                     <th>Email</th>
                     <th>Nom Entreprise</th>
-                    <th>Actions</th>
+                    <th>Actions</th>{this.state.alert}
                   </tr>
                 </thead>
                 
@@ -129,10 +155,6 @@ export default class FournisseurList extends Component {
           
 
           )
-        }
-      }
-    </MyContext.Consumer>
     
-    )
   }
 }

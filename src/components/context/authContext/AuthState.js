@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react'
 import axios from 'axios'
 import authReducer from '../authContext/authReducer'
-import AuthContext from '../authContext/authContext'
+import {AuthContext} from '../authContext/authContext'
 import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -15,8 +15,20 @@ const AuthState = (props) => {
     isAuthencated: null,
     loading: true,
     Commercant: null,
-    error: null
-  }
+    error: null,
+    com:{
+      nom:'',
+      prenom:'',
+      email:'',
+      password:'',
+      tel:0,
+      nomentreprise:'',
+      activite:'',
+      pays:'',
+      region:'',
+      devise:'',
+      codepostal:0
+  }}
   const [state, dispatch] = useReducer(authReducer, intialState)
 
   // Load User
@@ -33,7 +45,11 @@ const AuthState = (props) => {
       dispatch({
         type: LOGIN_SUCCESS,
         payload: res.data,
-        commercant:res.data
+        commercant:res.data,
+        com:{
+          nom:res.data,
+
+        }
       })
     } catch (err) {
       dispatch({
@@ -64,6 +80,7 @@ const AuthState = (props) => {
       commercant: state.commercant,
       error: state.error,
       loading: state.loading,
+      com:state.com,
       login,
       logout,
       clearErrors,

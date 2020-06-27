@@ -1,9 +1,12 @@
 import React from 'react';
 import '../App.css';
 import {NavLink} from 'react-router-dom';
+import Menu from '../components/layouts/Menu';
 function Gfacturation(){
 
     return(
+        <div>
+            <Menu/>
         <div className="content-header">
             <div className="container-fluid">
                 <div className="row mb-2">
@@ -33,6 +36,7 @@ function Gfacturation(){
                 </div>
             </div>
         </div>
+    </div>
     );
     
 }

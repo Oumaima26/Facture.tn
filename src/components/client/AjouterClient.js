@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../css/Produit.css';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
-import {  NotificationManager } from 'react-notifications';
+import SweetAlert from 'react-bootstrap-sweetalert';
 export const add = cl => {
   
   return axios
@@ -27,12 +27,17 @@ class AjouterClient extends Component {
       this.onChangeEmail = this.onChangeEmail.bind(this);
       this.onChangeTel = this.onChangeTel.bind(this);
       this.onSubmit = this.onSubmit.bind(this);
+      this.successAlert = this.successAlert.bind(this);
+      this.onCancel = this.onCancel.bind(this);
+      this.showAlert = this.showAlert.bind(this);
+      this.onConfirm = this.onConfirm.bind(this);
 
       this.state = {
         nom:'',
         prenom:'',
         tel:0,
-        email:'',    
+        email:'',   
+        alert:null, 
            formErrors:{
             nom:'',
             prenom:'',
@@ -79,6 +84,47 @@ class AjouterClient extends Component {
       }
         
        
+      successAlert() {
+        const getAlert = () => (
+          <SweetAlert 
+          success 
+          title="Good job!" 
+          onConfirm={()=>this.onConfirm} 
+          onCancel={()=>this.onCancel}>
+            You clicked the button!
+        </SweetAlert>
+        );
+    
+        this.setState({
+          alert: getAlert()
+        });
+      }
+      
+     onConfirm(){
+       window.location = '/client';       
+     }
+      onCancel(){
+        this.setState({
+            alert: null
+        });
+    }
+    showAlert(err) {
+      this.setState({
+          alert: (
+              <SweetAlert 
+                  danger
+                  showCancel
+                  cancelBtnText = "No"
+                  cancelBtnBsStyle = "default"
+                  customIcon = "thumbs-up.jpg"
+                  title ="Erreur"
+                  onCancel = {this.onCancel}
+              >
+                  {err}
+              </SweetAlert>
+          )            
+      });
+  }
       
 
         onSubmit = (e) => {
@@ -92,11 +138,10 @@ class AjouterClient extends Component {
               
               }
               console.log(client);
-              add(client).then(res => {
-                if (res) {
-                  window.location = '/client';
-                  NotificationManager.warning("Client added!");
-                }})/*
+              add(client).then((res) => {
+                this.successAlert()
+                window.location = '/client';
+              })/*
            axios.post('http://localhost:3001/Client/ajouter', client)
               .then(res => console.log(res.data));*/
               this.setState({

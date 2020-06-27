@@ -5,8 +5,7 @@ const ClientSchema = new Schema({
     nom: { 
         type: String,
         match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
-        required: true ,
-        unique: true,
+        required: true 
     },
     prenom: { 
         type: String,

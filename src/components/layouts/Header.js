@@ -1,18 +1,21 @@
-import React,{useContext} from 'react';
-import AuthContext from '../context/authContext/authContext';
+import React,{Component} from 'react';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser } from "../../actions/authActions";
 
-const Header =()=> {
-  const { logout, clearErrors } = useContext(AuthContext)
-  const onLogout = () => {
-    logout();
-    clearErrors();
-  }
+
+  class Header extends Component {
+  onLogoutClick = e => {
+    e.preventDefault();
+    this.props.logoutUser();
+  };
+  render() {
   return (
     <nav className="main-header navbar navbar-expand navbar-dark navbar-light">
       <ul className="navbar-nav">
         <li className="nav-item">
           <a className="nav-link" data-widget="pushmenu" href="/" role="button">
-          <i className="fa fa-bars "> </i></a>
+          <i className="fa fa-bars "></i></a>
         </li>
         <li className="nav-item d-none d-sm-inline-block">
           <a href="/dashboard" className="nav-link">Home</a>
@@ -38,12 +41,26 @@ const Header =()=> {
           </a>
         </li>
         <li className="nav-item">
-          <a className="nav-link"  href="/" onClick={onLogout} role="button">
+          <a className="nav-link"  href="/" onClick={this.onLogoutClick} role="button">
             <i className="fa fa-sign-out"></i>
           </a>
         </li>
       </ul>
     </nav>
   );
+  }
 }
-export default Header;
+
+Header.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { logoutUser }
+)(Header);

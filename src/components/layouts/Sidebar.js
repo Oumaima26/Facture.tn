@@ -1,8 +1,20 @@
 import React,{Component} from 'react';
 
+import {getCurrentUser} from '../../actions/authActions'
 class Sidebar extends Component {
     
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      currentUser: getCurrentUser()
+    };
+  }
+
+    
     render(){
+        
+    const { currentUser } = this.state;
                     return(
                         <aside className="main-sidebar sidebar-dark-primary elevation-4">
                             <a href="/" className="brand-link">
@@ -13,7 +25,8 @@ class Sidebar extends Component {
                             <div className="sidebar">
                             <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                                 <div className="image"></div>
-                                <div className="info">
+                                <div className="info" style={{color:"#ffffff"}}>
+                                {currentUser.user.nom} {currentUser.user.prenom}
                                 </div>
                             </div>
                             <nav className="mt-2">
@@ -36,21 +49,15 @@ class Sidebar extends Component {
                                         </a>
                                         <ul className="nav nav-treeview">
                                             <li className="nav-item">
-                                                <a href="/ajouterdevis" className="nav-link">
+                                                <a href="/devislist" className="nav-link">
                                                 <i className="fa fa-circle nav-icon"></i>
                                                 <p>Devis</p>
                                                 </a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="/" className="nav-link">
+                                                <a href="/facturelist" className="nav-link">
                                                 <i className="fa fa-circle nav-icon"></i>
                                                 <p>Facture</p>
-                                                </a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a href="/" className="nav-link">
-                                                <i className="fa fa-circle nav-icon"></i>
-                                                <p>Ligne Vente</p>
                                                 </a>
                                             </li>
                                         </ul>
@@ -64,13 +71,13 @@ class Sidebar extends Component {
                                         </a>
                                         <ul className="nav nav-treeview">
                                             <li className="nav-item">
-                                                <a href="/" className="nav-link">
+                                                <a href="/listcmd" className="nav-link">
                                                 <i className="fa fa-circle nav-icon"></i>
                                                 <p>Ligne d'achat</p>
                                                 </a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="/" className="nav-link">
+                                                <a href="/facturelistfournisseur" className="nav-link">
                                                 <i className="fa fa-circle nav-icon"></i>
                                                 <p>Facture</p>
                                                 </a>

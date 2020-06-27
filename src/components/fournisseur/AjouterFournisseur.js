@@ -4,6 +4,7 @@ import '../css/Produit.css';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import Footer from '../layouts/Footer';
+import SweetAlert from 'react-bootstrap-sweetalert';
 export const add = four => {
   
   return axios
@@ -31,6 +32,10 @@ class AjouterFournisseur extends Component {
       this.onChangeEmail = this.onChangeEmail.bind(this);
       this.onChangeNomentreprise = this.onChangeNomentreprise.bind(this);
       this.onSubmit = this.onSubmit.bind(this);
+      this.successAlert = this.successAlert.bind(this);
+      this.onCancel = this.onCancel.bind(this);
+      this.showAlert = this.showAlert.bind(this);
+      this.onConfirm = this.onConfirm.bind(this);
 
       this.state = {
         nom:'',
@@ -38,6 +43,7 @@ class AjouterFournisseur extends Component {
         tel:0,
         email:'',       
         nomentreprise:'',
+        alert:null,
            formErrors:{
             nom:'',
             prenom:'',
@@ -97,6 +103,47 @@ class AjouterFournisseur extends Component {
           }
         
         
+          successAlert() {
+            const getAlert = () => (
+              <SweetAlert 
+              success 
+              title="Good job!" 
+              onConfirm={()=>this.onConfirm} 
+              onCancel={()=>this.onCancel}>
+                You clicked the button!
+            </SweetAlert>
+            );
+        
+            this.setState({
+              alert: getAlert()
+            });
+          }
+          
+         onConfirm(){
+           window.location = '/fournisseur';       
+         }
+          onCancel(){
+            this.setState({
+                alert: null
+            });
+        }
+        showAlert(err) {
+          this.setState({
+              alert: (
+                  <SweetAlert 
+                      danger
+                      showCancel
+                      cancelBtnText = "No"
+                      cancelBtnBsStyle = "default"
+                      customIcon = "thumbs-up.jpg"
+                      title ="Erreur"
+                      onCancel = {this.onCancel}
+                  >
+                      {err}
+                  </SweetAlert>
+              )            
+          });
+      }
         
         
         
@@ -116,9 +163,10 @@ class AjouterFournisseur extends Component {
               
               }
               console.log(fournisseur);
-              add(fournisseur).then(res => {
-                  window.location = '/fournisseur';
-                })/*
+              add(fournisseur).then((res) => {
+                this.successAlert()
+                window.location = '/fournisseur'; 
+              })/*
            axios.post('http://localhost:3001/Fournisseur/ajouter', produit)
               .then(res => console.log(res.data));*/
               this.setState({

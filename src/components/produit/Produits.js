@@ -4,6 +4,7 @@ import axios from 'axios';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import Footer from '../layouts/Footer';
+import SweetAlert from 'react-bootstrap-sweetalert';
 const Produit = props => (
   <tr>
     <td>{props.produit.reference}</td>
@@ -18,7 +19,7 @@ const Produit = props => (
         <i className="nav-icon fa fa-edit" style={{"fontSize":"25px"}}></i>
       </Link>
       |
-      <a href="/produit" onClick={() => { props.deleteProduit(props.produit._id) }}>
+      <a href="/produit" onClick={(e) => { props.deleteThisGoal(e,props.produit._id) }}>
         <i className="nav-icon fa fa-trash" style={{"fontSize":"25px"}}></i>
       </a>
     </td>
@@ -30,8 +31,13 @@ export default class ProduitList extends Component {
     super(props);
 
     this.deleteProduit = this.deleteProduit.bind(this)
+    this.deleteThisGoal = this.deleteThisGoal.bind(this)
+    this.onCancelDelete = this.onCancelDelete.bind(this)
 
-    this.state = {produits: []};
+    this.state = {
+      produits: [],
+    alert:null
+  };
   }
 
   componentDidMount() {
@@ -47,15 +53,44 @@ export default class ProduitList extends Component {
   deleteProduit(id) {
     axios.delete('http://localhost:3001/Produit/'+id)
       .then(response => { console.log(response.data)});
+     
+    this.setState({
+      produits: this.state.produits.filter(el => el._id !== id),
+      alert:null
+    })
+
+  }
+  deleteThisGoal(e,id) {
+    e.preventDefault();
+    const getAlert = () => (
+      <SweetAlert
+        warning
+        showCancel
+        confirmBtnText="Supprimer"
+        confirmBtnBsStyle="danger"
+        cancelBtnBsStyle="default"
+        title="Supprimer cette produit?"
+        onCancel={() => this.onCancelDelete()}
+        onConfirm={() => this.deleteProduit(id)}
+        >
+        </SweetAlert>
+    );
 
     this.setState({
-      produits: this.state.produits.filter(el => el._id !== id)
-    })
+      alert: getAlert()
+    });
   }
+  onCancelDelete(){
+    this.setState({
+        alert: null
+    });
+}
+
+ 
 
   produitList() {
     return this.state.produits.map(currentproduit => {
-      return <Produit produit={currentproduit} deleteProduit={this.deleteProduit} key={currentproduit._id}/>;
+      return <Produit produit={currentproduit} deleteThisGoal={this.deleteThisGoal} key={currentproduit._id}/>;
     })
   }
 
@@ -109,7 +144,7 @@ export default class ProduitList extends Component {
                         <th>Prix</th>
                         <th>TVA</th>
                         <th>Catégorie</th>
-                        <th>Actions</th>
+                        <th>Actions</th>{this.state.alert}
                       </tr>
                     </thead>         
                     <tbody >

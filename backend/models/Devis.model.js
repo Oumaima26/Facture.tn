@@ -15,7 +15,6 @@ const DevisSchema = new Schema({
     },
      Note: { 
         type:String,
-        required: true 
     },
     TotalHT: { 
         type:Float,
@@ -25,14 +24,29 @@ const DevisSchema = new Schema({
         type:Float,
         required: true 
     },
-    TotalNet :{
+    TotalTTC :{
         type:Float,
         required: true 
     },
     commercant: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'commercants'
+    },   
+    client: {
+      type:String ,
+      required: true 
+
     },
 }, {timestamps: { createdAt: "created_at" }});
 const Devis = mongoose.model('Devis', DevisSchema);
 module.exports = Devis;
+
+
+
+
+
+
+
+
+
+

@@ -14,16 +14,18 @@ router.route('/ajouter').post((req, res) => {
     const Note= req.body.Note;  
     const TotalHT = Number(req.body.TotalHT);
     const TotalTVA = Number(req.body.TotalTVA);
-    const TotalNet  = Number(req.body.TotalNet);
-    const commercant = "5ed0ec85c37bf9406433e50d";  
+    const TotalTTC  = Number(req.body.TotalTTC);
+    const commercant = "5ed0ec85c37bf9406433e50d"; 
+    const client =req.body.client;
     const DevisModel = new Devis({
       DateDoc,
       Note,
       DateFinDoc,
       TotalHT,
       TotalTVA,
-      TotalNet,
-      commercant
+      TotalTTC,
+      commercant,
+      client,
     });
     DevisModel.save()
   .then(() => res.json("Devis added!"))
@@ -46,3 +48,9 @@ router.route('/update/:id').post((req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
   });
 module.exports = router;
+//suppremer un devis avec id "delete http://localhost:3001/Devis/:id"
+router.route('/:id').delete((req, res) => {
+    Devis.findByIdAndDelete(req.params.id)
+      .then(() => res.json('Devis deleted.'))
+      .catch(err => res.status(400).json('Error: ' + err));
+  });

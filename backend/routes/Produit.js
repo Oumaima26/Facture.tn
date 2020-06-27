@@ -78,7 +78,7 @@ router.get('/liste', auth, async (req, res) => {
 
 //recherche a une produit avec id "get http://localhost:3001/Produit/:id"
 router.route('/:id').get((req, res) => {
-    Produit.findById(req.params.idCommercant)
+    Produit.findById(req.params.id)
       .then(produit => res.json(produit))
       .catch(err => res.status(400).json('Error: ' + err));
 });

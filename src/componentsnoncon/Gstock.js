@@ -1,9 +1,11 @@
 import React from 'react';
 import '../App.css';
 import {NavLink} from 'react-router-dom';
+import Menu from '../components/layouts/Menu';
 function Gstock(){
 
     return(
+        <div><Menu/>
         <div className="content-header">
             <div className="container-fluid">
                 <div className="row mb-2">
@@ -30,6 +32,7 @@ function Gstock(){
                     </center>
                 </div>
             </div>
+        </div>
         </div>
     );
     
